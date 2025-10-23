@@ -5,6 +5,7 @@ import { Sidebar } from './components/Sidebar';
 import { LoadingDots } from './components/LoadingDots';
 import { WelcomeScreen } from './components/WelcomeScreen';
 import { LivePreviewLink } from './components/LivePreviewLink';
+import { ConnectionBanner } from './components/ConnectionBanner';
 import { Message, Conversation } from './types';
 import { generateResponse } from './lib/gemini';
 import { PanelLeft } from 'lucide-react';
@@ -122,6 +123,7 @@ export default function App() {
         </button>
         <div className="glass-panel relative flex-1 overflow-y-auto px-6 pb-32 pt-24">
           <div className="pointer-events-none absolute inset-x-10 top-10 h-32 rounded-3xl border border-white/5 bg-white/5 blur-3xl" />
+          <ConnectionBanner className="mb-6" />
           {messages.length === 0 ? (
             <WelcomeScreen />
           ) : (
