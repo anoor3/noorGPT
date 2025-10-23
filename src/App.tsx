@@ -4,6 +4,7 @@ import { ChatInput } from './components/ChatInput';
 import { Sidebar } from './components/Sidebar';
 import { LoadingDots } from './components/LoadingDots';
 import { WelcomeScreen } from './components/WelcomeScreen';
+import { LivePreviewLink } from './components/LivePreviewLink';
 import { Message, Conversation } from './types';
 import { generateResponse } from './lib/gemini';
 import { PanelLeft } from 'lucide-react';
@@ -91,8 +92,16 @@ export default function App() {
   }, []);
 
   return (
-    <div className="flex h-screen">
-      <div className={`${sidebarVisible ? 'w-64' : 'w-0'} transition-all duration-300 overflow-hidden`}>
+    <div className="relative flex h-screen overflow-hidden bg-slate-950 text-slate-100">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-emerald-500/20 blur-3xl" />
+        <div className="absolute bottom-0 right-0 h-[28rem] w-[28rem] rounded-full bg-purple-500/20 blur-3xl" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(30,64,175,0.18),_transparent_60%)]" />
+      </div>
+      <div className="pointer-events-none absolute right-8 top-6 z-20">
+        <LivePreviewLink />
+      </div>
+      <div className={`${sidebarVisible ? 'w-72' : 'w-0'} relative z-10 overflow-hidden transition-all duration-500`}>
         <Sidebar
           conversations={conversations}
           currentConversation={currentConversation}
@@ -100,27 +109,27 @@ export default function App() {
           onDeleteChat={handleDeleteChat}
           onSelectConversation={(id) => {
             setCurrentConversation(id);
-            setMessages(messages.filter(m => m.conversation_id === id));
+            setMessages(messages.filter((m) => m.conversation_id === id));
           }}
         />
       </div>
-      <div className="flex-1 flex flex-col glass-panel relative">
+      <div className="relative z-10 flex flex-1 flex-col">
         <button
           onClick={() => setSidebarVisible(!sidebarVisible)}
-          className="absolute top-4 left-4 p-2 rounded-lg bg-gray-800/50 hover:bg-gray-700/50 transition-colors"
+          className="absolute top-6 left-6 flex items-center justify-center rounded-xl border border-white/10 bg-slate-900/70 p-2 text-slate-300 shadow-lg shadow-black/40 backdrop-blur-md transition-all hover:-translate-y-0.5 hover:border-emerald-400/60 hover:text-emerald-300"
         >
-          <PanelLeft className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${!sidebarVisible ? 'rotate-180' : ''}`} />
+          <PanelLeft className={`h-5 w-5 transition-transform duration-300 ${!sidebarVisible ? 'rotate-180' : ''}`} />
         </button>
-        <div className="flex-1 overflow-y-auto">
+        <div className="glass-panel relative flex-1 overflow-y-auto px-6 pb-32 pt-24">
+          <div className="pointer-events-none absolute inset-x-10 top-10 h-32 rounded-3xl border border-white/5 bg-white/5 blur-3xl" />
           {messages.length === 0 ? (
             <WelcomeScreen />
           ) : (
-            messages.map((message) => (
-              <ChatMessage key={message.id} message={message} />
-            ))
+            messages.map((message) => <ChatMessage key={message.id} message={message} />)
           )}
           {loading && <LoadingDots />}
         </div>
+        <div className="pointer-events-none absolute inset-x-0 bottom-28 h-32 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent" />
         <ChatInput onSendMessage={handleSendMessage} disabled={loading} />
       </div>
     </div>
